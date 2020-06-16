@@ -23,12 +23,12 @@ fun generateFun(receiver: String, name: String) = """
 fun generateFuns(
         packageName: String,
         receiver: String,
-        functions: Iterable<KFunction<*>>
+        functions: Iterable<String>
 ): String {
 
     val simpleNameT = receiver.substringAfterLast(".")
     return "package $packageName\n\n" + functions
-            .map { f -> generateFun(simpleNameT, f.name) }
+            .map { f -> generateFun(simpleNameT, f) }
             .joinToString("\n")
 }
 

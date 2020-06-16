@@ -36,7 +36,8 @@ class SourceGeneratorMojo : AbstractMojo() {
         classesToInspect
                 .flatMap(::findFunctions)
                 .groupBy(KFunction<*>::extensionIdentifier)
-                .map { (k, v) -> k!! to generateFuns(packageName, k, v) }
+                .map { (k, v) -> k!! to v.map(KFunction<*>::name) }
+                .map { (k, v) -> k to generateFuns(packageName, k, v + "find") }
                 .map { (k, v) -> k.substringAfterLast(".").substringBefore("<") to v}
                 .forEach { (k, v) -> File(root, "${k}By.kt").writeText(v) }
     }
