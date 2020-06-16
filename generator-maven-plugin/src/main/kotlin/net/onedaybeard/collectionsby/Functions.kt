@@ -11,11 +11,11 @@ fun KFunction<*>.extensionIdentifier(): String? {
 }
 
 fun generateFun(receiver: String, name: String) = """
-    fun <T, U> $receiver.$name(selector: (T) -> U, match: U) =
+    fun <T, U> $receiver.${name}By(selector: (T) -> U, match: U) =
         $name(by(selector, match))
-    fun <T, U> $receiver.$name(selector: (T) -> U, match: () -> U) =
+    fun <T, U> $receiver.${name}By(selector: (T) -> U, match: () -> U) =
         $name(by(selector, match))
-    fun <T, U> $receiver.$name(selector: (T) -> U, predicate: (U) -> Boolean) =
+    fun <T, U> $receiver.${name}By(selector: (T) -> U, predicate: (U) -> Boolean) =
         $name(by(selector, predicate))
         
 """.trimIndent()
