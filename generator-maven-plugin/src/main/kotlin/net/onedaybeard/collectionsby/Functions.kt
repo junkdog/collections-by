@@ -6,14 +6,11 @@ import kotlin.reflect.KParameter.Kind.EXTENSION_RECEIVER
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.jvm.kotlinFunction
 
-fun KFunction<*>.extensionIdentifier(): String? {
-    return extensionReceiverParameter?.type?.toString()
-}
+fun KFunction<*>.extensionReceiverType(): String =
+        extensionReceiverParameter?.type?.toString() ?: ""
 
 fun generateFun(receiver: String, name: String) = """
     fun <T, U> $receiver.${name}By(selector: (T) -> U, match: U) =
-        $name(by(selector, match))
-    fun <T, U> $receiver.${name}By(selector: (T) -> U, match: () -> U) =
         $name(by(selector, match))
     fun <T, U> $receiver.${name}By(selector: (T) -> U, predicate: (U) -> Boolean) =
         $name(by(selector, predicate))
@@ -28,11 +25,13 @@ fun generateFuns(
 
     val simpleNameT = receiver.substringAfterLast(".")
     return "package $packageName\n\n" + functions
+            .sorted()
             .map { f -> generateFun(simpleNameT, f) }
             .joinToString("\n")
 }
 
-fun findFunctions(className: String): List<KFunction<*>> {
+@ExperimentalStdlibApi
+fun findPredicateFunctions(className: String): List<KFunction<*>> {
     return Class.forName(className)
             .methods
             .mapNotNull(Method::kotlinFunction)
@@ -41,7 +40,7 @@ fun findFunctions(className: String): List<KFunction<*>> {
             .filter(KFunction<*>::hasPredicateParameter)
 }
 
-@OptIn(ExperimentalStdlibApi::class)
+@ExperimentalStdlibApi
 private fun KFunction<*>.hasPredicateParameter(): Boolean {
     val arguments = parameters[1].type.arguments
     if (arguments.size != 2) return false

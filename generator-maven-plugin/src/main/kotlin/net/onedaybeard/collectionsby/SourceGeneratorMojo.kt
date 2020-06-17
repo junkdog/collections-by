@@ -4,24 +4,21 @@ import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
-import org.apache.maven.plugins.annotations.ResolutionScope.COMPILE_PLUS_RUNTIME
+import org.apache.maven.plugins.annotations.ResolutionScope.COMPILE
 import java.io.File
 import kotlin.reflect.KFunction
 
 
-/**
- * Applies transplants during build. As such, only compiled classes
- * are affected.
- */
 @Mojo(
     name = "generate",
     defaultPhase = GENERATE_SOURCES,
-    requiresDependencyResolution = COMPILE_PLUS_RUNTIME)
+    requiresDependencyResolution = COMPILE)
 class SourceGeneratorMojo : AbstractMojo() {
 
     @Parameter(property = "project.build.directory", readonly = true)
     private lateinit var build: File
 
+    @ExperimentalStdlibApi
     override fun execute() {
         val classesToInspect = listOf(
                 "kotlin.collections.CollectionsKt",
@@ -30,15 +27,15 @@ class SourceGeneratorMojo : AbstractMojo() {
 
         val packageName = "net.onedaybeard.collectionsby"
 
-        val root = File("$build/generated-sources/kotlin/${packageName.replace('.', '/')}")
+        val outputDir = File("$build/generated-sources/kotlin/${packageName.replace('.', '/')}")
                 .apply { mkdirs() }
 
         classesToInspect
-                .flatMap(::findFunctions)
-                .groupBy(KFunction<*>::extensionIdentifier)
-                .map { (k, v) -> k!! to v.map(KFunction<*>::name) }
-                .map { (k, v) -> k to generateFuns(packageName, k, v + "find") }
-                .map { (k, v) -> k.substringAfterLast(".").substringBefore("<") to v}
-                .forEach { (k, v) -> File(root, "${k}By.kt").writeText(v) }
+                .flatMap(::findPredicateFunctions)
+                .groupBy(KFunction<*>::extensionReceiverType)
+                .map { (cls, fns) -> cls to fns.map(KFunction<*>::name) }
+                .map { (cls, fns) -> cls to generateFuns(packageName, cls, fns + "find") }
+                .map { (cls, impl) -> cls.substringAfterLast(".").substringBefore("<") to impl }
+                .forEach { (name, impl) -> File(outputDir, "${name}By.kt").writeText(impl) }
     }
 }
