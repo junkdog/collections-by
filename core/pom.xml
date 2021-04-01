@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.onedaybeard.collections-by</groupId>
         <artifactId>collections-by</artifactId>
-        <version>0.1.2</version>
+        <version>0.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
@@ -21,7 +21,7 @@
         <url>https://github.com/junkdog/collections-by/</url>
         <connection>scm:git:git@github.com:junkdog/collections-by.git</connection>
         <developerConnection>scm:git:git@github.com:junkdog/collections-by.git</developerConnection>
-        <tag>release-0.1.2</tag>
+        <tag>0.3.0</tag>
     </scm>
 
     <licenses>
