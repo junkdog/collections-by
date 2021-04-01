@@ -102,7 +102,7 @@
         <profile>
             <id>release</id>
             <properties>
-                <dokka.skip>false</dokka.skip>
+                <dokka.skip>true</dokka.skip>
             </properties>
             <build>
                 <plugins>
