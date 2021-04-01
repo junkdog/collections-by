@@ -13,6 +13,10 @@
     <url>https://github.com/junkdog/collections-by</url>
     <description>Functions for working with Iterables and Sequeneces</description>
 
+    <properties>
+        <dokka.skip>false</dokka.skip>
+    </properties>
+
     <scm>
         <url>https://github.com/junkdog/collections-by/</url>
         <connection>scm:git:git@github.com:junkdog/collections-by.git</connection>

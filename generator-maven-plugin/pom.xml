@@ -20,6 +20,10 @@
         <tag>0.3.0</tag>
     </scm>
 
+    <properties>
+        <dokka.skip>false</dokka.skip>
+    </properties>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
